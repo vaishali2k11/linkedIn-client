@@ -8,7 +8,7 @@ export const Navbar1 = () => {
             <Link to={'/'} className="flex justify-between">
                 <div className="flex gap-1 items-center cursor-pointer">
                     <h3 className="text-blue-800 font-bold text-3xl">Linked</h3>
-                    <img src="../../../public/Logo/linkedIn-logo.png" alt="LinkedInLogo" className="w-6 h-6" />
+                    <img src="/Logo/linkedIn-logo.png" alt="LinkedInLogo" className="w-6 h-6" />
                 </div>
             </Link>
             <div className="flex box-border md:gap-1 gap-2 justify-center items-center">
