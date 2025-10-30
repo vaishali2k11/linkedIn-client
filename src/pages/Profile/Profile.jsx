@@ -5,6 +5,10 @@ import { Card } from "../../components/Card/Card"
 import { Post } from "../../components/Post/Post";
 import { Modal } from "../../components/Modal/Modal";
 import { ImageModal } from "../../components/ImageModal/ImageModal";
+import { EditInfoModal } from "../../components/EditInfoModal/EditInfoModal";
+import { AboutModal } from "../../components/AboutModal/AboutModal";
+import { ExpModal } from "../../components/ExpModal/ExpModal";
+import { MessageModal } from "../../components/MessageModal/MessageModal";
 
 import EditIcon from '@mui/icons-material/Edit';
 import CreateIcon from '@mui/icons-material/Create';
@@ -14,9 +18,24 @@ export const Profile = () => {
     const [imageModal, setImageModal] = useState(false);
     const [circularImage, setCircularImage] = useState(true);
     const [infoModal, setInfoModal] = useState(false);
+    const [aboutModal, setAboutModal] = useState(false);
+    const [expModal, setExpModal] = useState(false);
+    const [messageModal, setMessageModal] = useState(false);
 
     const handleInfoModal = () => {
         setInfoModal((prev) => !prev)
+    }
+
+    const handleAboutModal = () => {
+        setAboutModal((prev) => !prev);
+    }
+
+    const handleExpModal = () => {
+        setExpModal((prev) => !prev);
+    }
+
+    const handleMessageModal = () => {
+        setMessageModal((prev) => !prev);
     }
 
     const handleImageModalOpenClose = () => {
@@ -54,8 +73,8 @@ export const Profile = () => {
                                 </div>
 
                                 <div className="mt-10 relative px-8 py-2">
-                                    <div className="absolute cursor-pointer top-0 right-3 z-20 w-[35px] flex justify-center items-center h-[35px] rounded-full p-3 bg-white">
-                                        <CreateIcon />
+                                    <div onClick={handleInfoModal} className="absolute cursor-pointer top-0 right-3 z-20 w-[35px] flex justify-center items-center h-[35px] rounded-full p-3 bg-white">
+                                        <EditIcon />
                                     </div>
                                     <div className="w-full">
                                         <div className="text-2xl">User 1</div>
@@ -71,7 +90,7 @@ export const Profile = () => {
                                             </div>
 
                                             <div className="my-5 flex gap-5">
-                                                <div className="cursor-pointer p-2 border rounded-lg bg-blue-800 text-white font-semibold">Message</div>
+                                                <div onClick={handleMessageModal} className="cursor-pointer p-2 border rounded-lg bg-blue-800 text-white font-semibold">Message</div>
                                                 <div className="cursor-pointer p-2 border rounded-lg bg-blue-800 text-white font-semibold">Disconnect</div>
                                             </div>
                                         </div>
@@ -85,7 +104,7 @@ export const Profile = () => {
                         <Card padding={1}>
                             <div className="flex justify-between items-center">
                                 <div className="text-xl">About</div>
-                                <div className="cursor-pointer"><EditIcon /></div>
+                                <div onClick={handleAboutModal} className="cursor-pointer"><EditIcon /></div>
                             </div>
                             <div className="text-gray-700 text-md w-[80%]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus beatae commodi odio impedit cupiditate? Repellat, laborum quia eos non inventore at numquam enim nulla dolor, incidunt aliquam sed reiciendis soluta.</div>
                         </Card>
@@ -128,7 +147,7 @@ export const Profile = () => {
                         <Card padding={1}>
                             <div className="flex justify-between items-center">
                                 <div className="text-xl">Experience</div>
-                                <div className="cursor-pointer"><AddIcon /></div>
+                                <div onClick={handleExpModal} className="cursor-pointer"><AddIcon /></div>
                             </div>
 
                             <div className="mt-5">
@@ -168,7 +187,31 @@ export const Profile = () => {
             {infoModal && (
                 <>
                     <Modal title="Edit Info" onClose={handleInfoModal}>
+                        <EditInfoModal />
+                    </Modal>
+                </>
+            )}
 
+            {aboutModal && (
+                <>
+                    <Modal title="About" onClose={handleAboutModal}>
+                        <AboutModal />
+                    </Modal>
+                </>
+            )}
+
+            {expModal && (
+                <>
+                    <Modal title="Experience" onClose={handleExpModal}>
+                        <ExpModal />
+                    </Modal>
+                </>
+            )}
+
+            {messageModal && (
+                <>
+                    <Modal title="Message" onClose={handleMessageModal}>
+                        <MessageModal />
                     </Modal>
                 </>
             )}
