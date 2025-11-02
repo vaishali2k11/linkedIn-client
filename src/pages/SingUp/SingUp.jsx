@@ -24,7 +24,7 @@ const SignUp = (props) => {
                 toast.error(`Please fill all credentials!`);
             }
 
-            const response = await axios.post('http://localhost:4000/api/auth/register', registerFields);
+            const response = await axios.post('http://localhost:8080/api/auth/register', registerFields);
 
             if(response) {
                 toast.success(`You have registered successfully!`);

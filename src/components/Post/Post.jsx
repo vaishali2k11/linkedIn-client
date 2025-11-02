@@ -7,10 +7,12 @@ import SendIcon from '@mui/icons-material/Send';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined';
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
-export const Post = ({ profile }) => {
+export const Post = ({ profile, postData, key, personalData }) => {
     const [seeMore, setSeeMore] = useState(false);
     const [comment, setComment] = useState(false);
-    const desc = `Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum reiciendis libero commodi velit, delectus ratione impedit, corporis rem adipisci est provident fugiat optio a molestias. Quia aliquid dicta consequatur. Impedit.`
+
+    console.log('postData:', postData)
+    const desc = postData?.desc
 
     const handleSendComment = (e) => {
         e.preventDefault();
@@ -20,29 +22,33 @@ export const Post = ({ profile }) => {
         <Card padding={0}>
             <div className="flex gap-3 p-4">
                 <div className="w-12 h-12 rounded-4xl">
-                    <img src="https://avatar.iran.liara.run/public/boy?username=Ash" alt="" className="rounded-4xl w-12 h-12 border-2 border-white cursor-pointer" />
+                    <img src={postData?.user?.profile_pic} alt="" className="rounded-4xl w-12 h-12 border-2 border-white cursor-pointer" />
                 </div>
                 <div>
-                    <div className="text-lg font-semibold">Dumy User</div>
+                    <div className="text-lg font-semibold">{postData?.user?.f_name}</div>
 
-                    <div className="text-xs text-gray-500">SDE-II Eng. @Amazon</div>
+                    <div className="text-xs text-gray-500">{postData?.user?.headline}</div>
                 </div>
             </div>
 
             <div className="text-md p-4 my-3 whitespace-pre-line grow">
-                {seeMore ? desc : `${desc.slice(0, 50)}....`} <span onClick={() => setSeeMore((prev) => !prev)} className="cursor-pointer text-gray-500 hover:underline">{seeMore ? "See Less" : "See More"}</span>
+                {seeMore ? desc : `${desc.slice(0, 35)}${desc.length > 65 ? '...' : ''}`} {desc.length < 65 ? null : <span onClick={() => setSeeMore((prev) => !prev)} className="cursor-pointer text-gray-500 hover:underline">{seeMore ? "See Less" : "See More"}</span>}
             </div>
 
-            <div className="w-full h-[300px]">
-                <img src="https://media.istockphoto.com/id/1381637603/photo/mountain-landscape.jpg?s=612x612&w=0&k=20&c=w64j3fW8C96CfYo3kbi386rs_sHH_6BGe8lAAAFS-y4=" alt="Post Image" className="w-full h-full" />
-            </div>
+            {postData && postData.image_link && (
+                <>
+                    <div className="w-full h-[300px]">
+                        <img src={postData?.image_link} alt="Post Image" className="w-full h-full" />
+                    </div>
+                </>
+            )}
 
             <div className="my-2 p-4 flex justify-between items-center">
                 <div className="flex gap-1 items-center">
-                    <ThumbUpIcon sx={{ color: "blue", fontSize: 12 }} /> <span className="text-sm text-gray-600">1 Likes</span>
+                    <ThumbUpIcon sx={{ color: "blue", fontSize: 12 }} /> <span className="text-sm text-gray-600">{postData?.likes?.length} Likes</span>
                 </div>
                 <div className="flex gap-1 items-center">
-                    <span className="text-sm text-gray-600">2 Comments</span>
+                    <span className="text-sm text-gray-600">{postData?.comments} Comments</span>
                 </div>
             </div>
 

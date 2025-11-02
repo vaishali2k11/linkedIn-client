@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "../../components/Card/Card";
 import { ProfileCard } from "../../components/ProfileCard/ProfileCard";
 import VideoCallIcon from "@mui/icons-material/VideoCall";
@@ -9,9 +9,56 @@ import { Post } from "../../components/Post/Post";
 import { Modal } from "../../components/Modal/Modal";
 import { AddModal } from "../../components/AddModal/AddModal";
 import { Loader } from "../../components/Loader/Loader";
+import axios from "axios";
+
+import { ToastContainer, toast } from "react-toastify";
 
 export const Feeds = () => {
   const [addPostModal, setAddPostModal] = useState(false);
+  const [personalData, setPersonalData] = useState(null);
+  const [postData, setPostData] = useState([])
+
+  // const fetchSelfData = async () => {
+  //   try {
+  //     const response = await axios.get('http://localhost:8080/api/auth/self', { withCredentials: true });
+
+  //     if (response) {
+  //       setPersonalData(response.data.user);
+  //     }
+  //   } catch (error) {
+  //     console.log('error:', error);
+  //     toast.error(error?.response?.data?.error);
+  //   }
+  // }
+
+  const fetchedSelfPostDataFn = async () => {
+    try {
+      const [userData, postData] = await Promise.all([
+        await axios.get('http://localhost:8080/api/auth/self', { withCredentials: true }),
+        await axios.get('http://localhost:8080/api/post/get-all-post', { withCredentials: true })
+      ])
+
+      if(userData) {
+        setPersonalData(userData.data.user);
+        localStorage.setItem('userInfo', JSON.stringify(userData.data.user));
+      }
+
+      if(postData) {
+        setPostData(postData.data.posts);
+      }
+
+    } catch (error) {
+      console.log('error:', error);
+      toast.error(error?.response?.data?.error);
+    }
+  }
+
+
+
+  useEffect(() => {
+    // fetchSelfData();
+    fetchedSelfPostDataFn();
+  }, [])
 
   const handleOpenPostModal = () => {
     setAddPostModal((prev) => !prev);
@@ -22,7 +69,7 @@ export const Feeds = () => {
       {/* Left Side */}
       <div className="w-[21%] sm:block sm:w-[23%] hidden py-5">
         <div className="h-fit">
-          <ProfileCard />
+          <ProfileCard data={personalData} />
         </div>
         <div className="w-full my-5">
           <Card padding={1}>
@@ -45,7 +92,7 @@ export const Feeds = () => {
           <Card padding={1}>
             <div className="flex gap-2 items-center">
               <img
-                src="https://avatar.iran.liara.run/public/boy?username=Ash"
+                src={personalData?.profile_pic}
                 alt="Profile Logo"
                 className="rounded-full w-[52px] h-[52px] border-2 border-white cursor-pointer"
               />
@@ -63,18 +110,21 @@ export const Feeds = () => {
                 className="flex gap-2 p-2 cursor-pointer justify-center rounded-lg w-[33%] hover:bg-gray-100"
               >
                 <VideoCallIcon sx={{ color: "green" }} />
+                Video
               </div>
               <div
                 onClick={() => setAddPostModal(true)}
                 className="flex gap-2 p-2 cursor-pointer justify-center rounded-lg w-[33%] hover:bg-gray-100"
               >
                 <InsertPhotoIcon sx={{ color: "blue" }} />
+                Photo
               </div>
               <div
                 onClick={() => setAddPostModal(true)}
                 className="flex gap-2 p-2 cursor-pointer justify-center rounded-lg w-[33%] hover:bg-gray-100"
               >
                 <ArticleIcon sx={{ color: "orange" }} />
+                Article
               </div>
             </div>
           </Card>
@@ -83,8 +133,11 @@ export const Feeds = () => {
         <div className="border-b border-gray-400 w-full my-5" />
 
         <div className="w-full flex flex-col gap-5">
-          <Post />
-          <Post />
+          {postData.map((post, index) => {
+            return (
+              <Post postData={post} key={index} personalData={personalData} />
+            )
+          })}
         </div>
       </div>
 
@@ -114,10 +167,12 @@ export const Feeds = () => {
       {addPostModal && (
         <>
           <Modal title={""} onClose={handleOpenPostModal}>
-            <AddModal />
+            <AddModal personalData={personalData} />
           </Modal>
         </>
       )}
+
+      <ToastContainer />
     </div>
   );
 };
