@@ -35,17 +35,16 @@ function App() {
           <Route path="/" element={isLogin ? <Navigate to={'/feeds'} /> : <LandingPage handleChangeLoginValue={handleChangeLoginValue} />} />
           <Route path="/signUp" element={isLogin ? <Navigate to={'/feeds'} /> : <SignUp handleChangeLoginValue={handleChangeLoginValue} />} />
           <Route path="/signIn" element={isLogin ? <Navigate to={'/feeds'} /> : <SignIn handleChangeLoginValue={handleChangeLoginValue} />} />
-          <Route path="/feeds" element={<Feeds />} />
-          <Route path="/my-network" element={<MyNetwork />} />
-          <Route path="/resume" element={<Resume />} />
-          <Route path="/messages" element={<Messages />} />
-          <Route path="/notification" element={<Notifications />} />
-
-          <Route path="/profile/:id" element={<Profile />} />
-          <Route path="/profile/:id/activities" element={<AllActivities />} />
+          <Route path="/feeds" element={isLogin ? <Feeds /> : <Navigate to={'/signIn'} />} />
+          <Route path="/my-network" element={isLogin ? <MyNetwork /> : <Navigate to={'/signIn'} />} />
+          <Route path="/resume" element={isLogin ? <Resume /> : <Navigate to={'/signIn'} />} />
+          <Route path="/messages" element={isLogin ? <Messages /> : <Navigate to={'/signIn'} />} />
+          <Route path="/notification" element={isLogin ? <Notifications /> : <Navigate to={'/signIn'} />} />
+          <Route path="/profile/:id" element={isLogin ? <Profile /> : <Navigate to={'/signIn'} />} />
+          <Route path="/profile/:id/activities" element={isLogin ? <AllActivities /> : <Navigate to={'/signIn'} />} />
           <Route
             path="/profile/:id/activities/:postId"
-            element={<SingleActivity />}
+            element={isLogin ? <SingleActivity /> : <Navigate to={'/signIn'} />}
           />
         </Routes>
         <Footer />
