@@ -1,9 +1,41 @@
 
-import React from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
 import { GoogleLoginComp } from "../../components/GoogleLogin/GoogleLogin";
 
-const SignUp = () => {
+const SignUp = (props) => {
+    const navigate = useNavigate();
+    const [registerFields, setRegisterFields] = useState({
+        email: "",
+        password: "",
+        f_name: "",
+    });
+
+
+    const handleOnChangeInput = (event, key) => {
+        setRegisterFields({...registerFields, [key]: event.target.value});
+    }
+
+    const handleRegisterFn = async () => {
+        try {
+            if(registerFields.email.trim().length === 0 || registerFields.password.trim().length === 0 || registerFields.f_name.trim().length === 0) {
+                toast.error(`Please fill all credentials!`);
+            }
+
+            const response = await axios.post('http://localhost:4000/api/auth/register', registerFields);
+
+            if(response) {
+                toast.success(`You have registered successfully!`);
+                setRegisterFields({...registerFields, email: "", password: "", f_name: ""})
+                navigate("/signIn")
+            }
+        } catch(error) {
+            console.log('handleRegisterFn error:', error)
+            toast.error(error?.response?.data?.error);
+        }
+    }
 
     return (
         <div className="w-full flex flex-col items-center justify-center">
@@ -13,19 +45,19 @@ const SignUp = () => {
                     
                     <div>
                         <label htmlFor="email">Email</label>
-                        <input type="text" className="w-full text-xl border-2 rounded-lg px-5 py-1" placeholder="Email" />
+                        <input value={registerFields.email} onChange={(e) => handleOnChangeInput(e, 'email')} type="text" className="w-full text-xl border-2 rounded-lg px-5 py-1" placeholder="Email" />
                     </div>
 
                     <div>
                         <label htmlFor="password">Password</label>
-                        <input type="password" className="w-full text-xl border-2 rounded-lg px-5 py-1" placeholder="Password" />
+                        <input value={registerFields.password} onChange={(e) => handleOnChangeInput(e, 'password')} type="password" className="w-full text-xl border-2 rounded-lg px-5 py-1" placeholder="Password" />
                     </div>
                     <div>
-                        <label htmlFor="fullName">Full Name</label>
-                        <input type="text" className="w-full text-xl border-2 rounded-lg px-5 py-1" placeholder="fullName" />
+                        <label htmlFor="f_name">Full Name</label>
+                        <input value={registerFields.f_name} onChange={(e) => handleOnChangeInput(e, 'f_name')} type="text" className="w-full text-xl border-2 rounded-lg px-5 py-1" placeholder="fullName" />
                     </div>
 
-                    <div className="w-full hover:bg-blue-500 bg-blue-800 text-white py-3 px-4 rounded-xl text-center text-xl cursor-pointer my-2">
+                    <div onClick={handleRegisterFn} className="w-full hover:bg-blue-500 bg-blue-800 text-white py-3 px-4 rounded-xl text-center text-xl cursor-pointer my-2">
                         Register
                     </div>
                 </div>
@@ -36,9 +68,10 @@ const SignUp = () => {
                     <div className="border-b border-gray-400 w-[45%] my-6" />
                 </div>
 
-                <div><GoogleLoginComp /></div>
+                <div><GoogleLoginComp handleChangeLoginValue={props.handleChangeLoginValue} /></div>
             </div>
             <div className="mt-4 mb-10">Already on LinkedIn? <Link to={'/signIn'} className="text-blue-800 cursor-pointer">Sign in</Link></div>
+            <ToastContainer />
         </div>
     )
 }

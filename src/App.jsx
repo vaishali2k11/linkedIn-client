@@ -1,8 +1,6 @@
-import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
-
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { useState, useEffect } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import axios from "axios";
 
 import "./App.css";
 
@@ -23,18 +21,20 @@ import { Navbar2 } from "./components/NavbarV2/Navbar2";
 import { Footer } from "./components/Footer/Footer";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [isLogin, setIsLogin] = useState(localStorage.getItem("isLogin"));
 
-  const isLogin = true;
+  const handleChangeLoginValue = (value) => {
+    setIsLogin(value);
+  }
 
   return (
     <>
       <div className="bg-gray-100 w-full box-border">
         {isLogin ? <Navbar2 /> : <Navbar1 />}
         <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/signUp" element={<SignUp />} />
-          <Route path="/signIn" element={<SignIn />} />
+          <Route path="/" element={isLogin ? <Navigate to={'/feeds'} /> : <LandingPage handleChangeLoginValue={handleChangeLoginValue} />} />
+          <Route path="/signUp" element={isLogin ? <Navigate to={'/feeds'} /> : <SignUp handleChangeLoginValue={handleChangeLoginValue} />} />
+          <Route path="/signIn" element={isLogin ? <Navigate to={'/feeds'} /> : <SignIn handleChangeLoginValue={handleChangeLoginValue} />} />
           <Route path="/feeds" element={<Feeds />} />
           <Route path="/my-network" element={<MyNetwork />} />
           <Route path="/resume" element={<Resume />} />
