@@ -1,5 +1,8 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
 
 import { Advertisement } from "../../components/Advertisement/Advertisement";
 import { Card } from "../../components/Card/Card";
@@ -9,6 +12,7 @@ import { ImageModal } from "../../components/ImageModal/ImageModal";
 import { EditInfoModal } from "../../components/EditInfoModal/EditInfoModal";
 import { AboutModal } from "../../components/AboutModal/AboutModal";
 import { ExpModal } from "../../components/ExpModal/ExpModal";
+
 import { MessageModal } from "../../components/MessageModal/MessageModal";
 
 import EditIcon from "@mui/icons-material/Edit";
@@ -17,6 +21,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 
 export const Profile = () => {
+  const { id } = useParams();
   const [imageModal, setImageModal] = useState(false);
   const [circularImage, setCircularImage] = useState(true);
   const [infoModal, setInfoModal] = useState(false);
@@ -24,7 +29,49 @@ export const Profile = () => {
   const [expModal, setExpModal] = useState(false);
   const [messageModal, setMessageModal] = useState(false);
 
-  const { id } = useParams();
+  const [userData, setUserData] = useState(null);
+  console.log('userData:', userData)
+  const [postData, setPostData] = useState([]);
+  const [ownData, setOwnData] = useState(null);
+
+  const [updateExp, setUpdateExp] = useState({ clicked: "", id: "", dates: {}});
+
+  useEffect(() => {
+    fetchDataOnLoad();
+  }, []);
+
+  const updateExpEdit = (id, data) => {
+    setUpdateExp({
+      ...updateExp,
+      clicked: true,
+      id,
+      data
+    })
+    setExpModal((prev) => !prev); 
+  }
+
+  const fetchDataOnLoad = async () => {
+    try {
+      const [userData, postData, ownData] = await Promise.all([
+        axios.get(`http://localhost:8080/api/auth/user/${id}`, { withCredentials: true }),
+        axios.get(`http://localhost:8080/api/post/get-top-5-post-for-user/${id}`, { withCredentials: true }),
+        axios.get('http://localhost:8080/api/auth/self', { withCredentials: true })
+      ])
+
+      if (userData) {
+        setUserData(userData?.data?.user);
+      }
+      if (postData) {
+        setPostData(postData?.data?.top5Post);
+      }
+      if (ownData) {
+        setOwnData(ownData?.data?.user)
+      }
+    } catch (error) {
+      console.log('error:', error)
+      toast.error('Something went wrong!')
+    }
+  }
 
   const handleInfoModal = () => {
     setInfoModal((prev) => !prev);
@@ -35,6 +82,9 @@ export const Profile = () => {
   };
 
   const handleExpModal = () => {
+    if(expModal) {
+      setUpdateExp({ clicked: "", id: "", dates: {} })
+    }
     setExpModal((prev) => !prev);
   };
 
@@ -56,6 +106,19 @@ export const Profile = () => {
     setCircularImage(true);
   };
 
+  const handleEditFn = async (data) => {
+    try {
+      const response = await axios.put(`http://localhost:8080/api/auth/update-user`, { user: data }, { withCredentials: true });
+
+      if(response) {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.log('error:', error)
+      toast.error(error?.response?.data?.error);
+    }
+  }
+
   return (
     <div className="px-5 xl:px-50 py-9 flex flex-col gap-5 w-full mt-5 bg-gray-100">
       <div className="flex justify-between">
@@ -72,7 +135,7 @@ export const Profile = () => {
                     <EditIcon />
                   </div>
                   <img
-                    src="https://thumbs.dreamstime.com/b/landscape-sunset-view-morain-lake-mountain-range-alberta-canada-44613434.jpg"
+                    src={userData?.cover_pic}
                     alt=""
                     className="w-full h-[200px] rounded-tr-lg rounded-tl-lg"
                   />
@@ -81,7 +144,7 @@ export const Profile = () => {
                     className="absolute object-cover top-24 left-6 z-10"
                   >
                     <img
-                      src="https://avatar.iran.liara.run/public/boy?username=Ash"
+                      src={userData?.profile_pic}
                       alt=""
                       className="rounded-full border-2 border-white cursor-pointer w-35 h-35"
                     />
@@ -96,13 +159,13 @@ export const Profile = () => {
                     <EditIcon />
                   </div>
                   <div className="w-full">
-                    <div className="text-2xl">User 1</div>
+                    <div className="text-2xl">{userData?.f_name}</div>
                     <div className="text-gray-700">
-                      I am a software engineer
+                      {userData?.headline}
                     </div>
-                    <div className="text-sm text-gray-500">Delhi, India</div>
+                    <div className="text-sm text-gray-500">{userData?.curr_location}</div>
                     <div className="text-md text-blue-800 w-fit cursor-pointer hover:underline">
-                      2 Connections
+                      {userData?.friends?.length} Connections
                     </div>
 
                     <div className="md:flex w-full justify-between">
@@ -145,10 +208,7 @@ export const Profile = () => {
                 </div>
               </div>
               <div className="text-gray-700 text-md w-[80%]">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Repellendus beatae commodi odio impedit cupiditate? Repellat,
-                laborum quia eos non inventore at numquam enim nulla dolor,
-                incidunt aliquam sed reiciendis soluta.
+                {userData?.about}
               </div>
             </Card>
           </div>
@@ -159,21 +219,15 @@ export const Profile = () => {
                 <div className="text-xl">Skills</div>
               </div>
               <div className="text-gray-700 text-md my-2 w-full flex gap-4 flex-wrap">
-                <div className="py-2 px-3 cursor-pointer bg-blue-800 text-white rounded-lg">
-                  React.JS
-                </div>
-                <div className="py-2 px-3 cursor-pointer bg-blue-800 text-white rounded-lg">
-                  JavaScript
-                </div>
-                <div className="py-2 px-3 cursor-pointer bg-blue-800 text-white rounded-lg">
-                  Node.js
-                </div>
-                <div className="py-2 px-3 cursor-pointer bg-blue-800 text-white rounded-lg">
-                  MongoDB
-                </div>
-                <div className="py-2 px-3 cursor-pointer bg-blue-800 text-white rounded-lg">
-                  Express.js
-                </div>
+                {userData?.skills?.map((skill, index) => {
+                  return (
+                    <>
+                      <div key={index} className="py-2 px-3 cursor-pointer bg-blue-800 text-white rounded-lg">
+                        {skill}
+                      </div>
+                    </>
+                  )
+                })}
               </div>
             </Card>
           </div>
@@ -190,24 +244,18 @@ export const Profile = () => {
 
               {/* Parent Div for scrollable activities */}
               <div className="overflow-x-auto my-2 flex gap-1 overflow-y-hidden w-full">
-                <Link
-                  to={`/profile/${id}/activities/:123451`}
-                  className="cursor-pointer shrink-0 w-[350px] h-[560px]"
-                >
-                  <Post profile={1} />
-                </Link>
-                <Link
-                  to={`/profile/${id}/activities/:123452`}
-                  className="cursor-pointer shrink-0 w-[350px] h-[560px]"
-                >
-                  <Post profile={1} />
-                </Link>
-                <Link
-                  to={`/profile/${id}/activities/:123453`}
-                  className="cursor-pointer shrink-0 w-[350px] h-[560px]"
-                >
-                  <Post profile={1} />
-                </Link>
+                {postData?.map((post, index) => {
+                  return (
+                    <>
+                      <Link
+                        to={`/profile/${id}/activities/${post?._id}`}
+                        className="cursor-pointer shrink-0 w-[350px] h-[560px]"
+                      >
+                        <Post profile={1} postData={post} personalData={ownData} />
+                      </Link>
+                    </>
+                  )
+                })}
               </div>
 
               <div className="w-full flex justify-center items-center">
@@ -231,23 +279,29 @@ export const Profile = () => {
               </div>
 
               <div className="mt-5">
-                <div className="p-2 border-t border-gray-300 flex justify-between">
-                  <div>
-                    <div className="text-lg">
-                      DSE Engineer | Full Stack Engineer
-                    </div>
+                {userData && userData.experience && userData.experience.map((experience, index) => {
+                  return (
+                    <>
+                      <div className="p-2 border-t border-gray-300 flex justify-between">
+                        <div>
+                          <div className="text-lg">
+                            {experience.designation}
+                          </div>
 
-                    <div className="text-sm">Amazon</div>
-                    <div className="text-sm text-gray-500">
-                      March 2022, Present
-                    </div>
-                    <div className="text-sm text-gray-500">Delhi, India</div>
-                  </div>
+                          <div className="text-sm">{experience.company_name}</div>
+                          <div className="text-sm text-gray-500">
+                            {experience.duration}
+                          </div>
+                          <div className="text-sm text-gray-500">{experience.location}</div>
+                        </div>
 
-                  <div className="cursor-pointer">
-                    <EditIcon />
-                  </div>
-                </div>
+                        <div onClick={() => updateExpEdit(experience?._id, experience)} className="cursor-pointer">
+                          <EditIcon />
+                        </div>
+                      </div>
+                    </>
+                  )
+                })}
               </div>
             </Card>
           </div>
@@ -263,7 +317,7 @@ export const Profile = () => {
       {imageModal && (
         <>
           <Modal title="Upload Image" onClose={handleImageModalOpenClose}>
-            <ImageModal isCircular={circularImage} />
+            <ImageModal selfData={ownData} handleEditFn={handleEditFn} isCircular={circularImage} />
           </Modal>
         </>
       )}
@@ -271,7 +325,7 @@ export const Profile = () => {
       {infoModal && (
         <>
           <Modal title="Edit Info" onClose={handleInfoModal}>
-            <EditInfoModal />
+            <EditInfoModal selfData={ownData} handleEditFn={handleEditFn} />
           </Modal>
         </>
       )}
@@ -279,7 +333,7 @@ export const Profile = () => {
       {aboutModal && (
         <>
           <Modal title="About" onClose={handleAboutModal}>
-            <AboutModal />
+            <AboutModal selfData={ownData} handleEditFn={handleEditFn} />
           </Modal>
         </>
       )}
@@ -287,7 +341,7 @@ export const Profile = () => {
       {expModal && (
         <>
           <Modal title="Experience" onClose={handleExpModal}>
-            <ExpModal />
+            <ExpModal selfData={ownData} handleEditFn={handleEditFn} updateExp={updateExp} setUpdateExp={setUpdateExp} />
           </Modal>
         </>
       )}
@@ -299,6 +353,8 @@ export const Profile = () => {
           </Modal>
         </>
       )}
+
+      <ToastContainer />
     </div>
   );
 };

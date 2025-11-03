@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Navbar2.css";
 import HomeIcon from "@mui/icons-material/Home";
 import GroupIcon from "@mui/icons-material/Group";
@@ -9,9 +9,16 @@ import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 export const Navbar2 = () => {
-  const [dropdown, setDropdown] = useState(false);
-
   const location = useLocation();
+
+  const [dropdown, setDropdown] = useState(false);
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    let userData = localStorage.getItem('userInfo');
+    setUserData(userData ? JSON.parse(userData) : null)
+  }, [])
+
   return (
     <div className="bg-white h-[52px] flex justify-between py-1 px-5 xl:px-50 fixed top-0 w-full z-100">
       <div className="flex gap-2 items-center">
@@ -134,11 +141,11 @@ export const Navbar2 = () => {
           </div>
         </Link>
         <Link
-          to={`/profile/12345`}
+          to={`/profile/${userData?._id}`}
           className="flex flex-col items-center cursor-pointer"
         >
           <img
-            src="https://avatar.iran.liara.run/public/boy?username=Ash"
+            src={userData?.profile_pic}
             alt="Profile Logo"
             className="w-6 h-6 rounded-full"
           />
