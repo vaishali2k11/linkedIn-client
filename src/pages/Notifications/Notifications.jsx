@@ -1,14 +1,67 @@
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import { Advertisement } from "../../components/Advertisement/Advertisement";
 import { ProfileCard } from "../../components/ProfileCard/ProfileCard";
 import { Card } from "../../components/Card/Card";
 
 export const Notifications = () => {
+  const navigate = useNavigate();
+  const [ownData, setOwnData] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    let userData = localStorage.getItem("userInfo");
+    setOwnData(userData ? JSON.parse(userData) : null);
+    handleToFetchNotificationDataApi();
+  }, []);
+
+  const handleToFetchNotificationDataApi = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/notification/get-notification`,
+        { withCredentials: true }
+      );
+
+      if (response) {
+        setNotifications(response?.data?.notifications);
+      }
+    } catch (error) {
+      console.log("error:", error);
+      toast.error("Failed to copy the link!");
+    }
+  };
+
+  const handleOnClickNotification = async (item) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:8080/api/notification/update-notification-read-status`,
+        {
+          notificationId: item?._id,
+        },
+        { withCredentials: true }
+      );
+
+      if (response) {
+        if (item.type === "comment") {
+          navigate(`/profile/${ownData?._id}/activities/${item?.postId}`);
+        } else {
+          navigate("/my-network");
+        }
+      }
+    } catch (error) {
+      console.log("error:", error);
+      toast.error("Failed to copy the link!");
+    }
+  };
+
   return (
     <div className="px-5 xl:px-50 py-9 flex gap-5 w-full mt-5 bg-gray-100">
       {/* Left Side */}
       <div className="w-[21%] sm:block sm:w-[23%] hidden py-5">
         <div className="h-fit">
-          <ProfileCard />
+          <ProfileCard data={ownData} />
         </div>
       </div>
 
@@ -19,24 +72,26 @@ export const Notifications = () => {
           <Card padding={0}>
             <div className="w-full">
               {/* For each notification */}
-              <div className="border-b cursor-pointer flex gap-4 items-center border-gray-300 p-3">
-                <img
-                  src="https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?semt=ais_hybrid&w=740&q=80"
-                  alt=""
-                  className="rounded-full cursor-pointer w-15 h-15"
-                />
-                <div>Dummy User has sent you friend request</div>
-              </div>
-
-              {/* For each notification */}
-              <div className="border-b cursor-pointer flex gap-4 items-center border-gray-300 p-3">
-                <img
-                  src="https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?semt=ais_hybrid&w=740&q=80"
-                  alt=""
-                  className="rounded-full cursor-pointer w-15 h-15"
-                />
-                <div>Dummy User has commented on your post</div>
-              </div>
+              {notifications?.map((item, index) => {
+                return (
+                  <>
+                    <div
+                      key={index}
+                      onClick={() => handleOnClickNotification(item)}
+                      className={`border-b cursor-pointer flex gap-4 items-center border-gray-300 p-3 ${
+                        item?.is_read ? "bg-gray-200" : "bg-blue-100"
+                      }`}
+                    >
+                      <img
+                        src={item?.sender?.profile_pic}
+                        alt="profile photo"
+                        className="rounded-full cursor-pointer w-15 h-15"
+                      />
+                      <div>{item?.content}</div>
+                    </div>
+                  </>
+                );
+              })}
             </div>
           </Card>
         </div>

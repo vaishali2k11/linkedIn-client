@@ -1,28 +1,80 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
+
 import "./Navbar2.css";
 import HomeIcon from "@mui/icons-material/Home";
 import GroupIcon from "@mui/icons-material/Group";
 import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
 import MessageIcon from "@mui/icons-material/Message";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
-import { useLocation } from "react-router-dom";
-import { Link } from "react-router-dom";
 
 export const Navbar2 = () => {
   const location = useLocation();
-
-  const [dropdown, setDropdown] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debounceTerm, setDebounceTerm] = useState("");
+  const [searchUser, setSearchUser] = useState([]);
+  const [notificationCount, setNotificationCount] = useState(0);
 
   useEffect(() => {
-    let userData = localStorage.getItem('userInfo');
-    setUserData(userData ? JSON.parse(userData) : null)
-  }, [])
+    const id = setTimeout(() => {
+      setDebounceTerm(searchTerm);
+    }, 1000);
+
+    () => setTimeout(id);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    if (debounceTerm) {
+      handleToSearchApiCall();
+    }
+  }, [debounceTerm]);
+
+  useEffect(() => {
+    let userData = localStorage.getItem("userInfo");
+    setUserData(userData ? JSON.parse(userData) : null);
+
+    handleToFetchNotification();
+  }, []);
+
+  const handleToFetchNotification = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/notification/unread-notification`,
+        { withCredentials: true }
+      );
+
+      if (response) {
+        setNotificationCount(response?.data?.count);
+      }
+    } catch (error) {
+      console.log("error:", error);
+      toast.error("Something went wrong!");
+    }
+  };
+
+  const handleToSearchApiCall = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/auth/find-user?query=${debounceTerm}`,
+        { withCredentials: true }
+      );
+
+      if (response) {
+        setSearchUser(response?.data?.users);
+      }
+    } catch (error) {
+      console.log("error:", error);
+      toast.error("Something went wrong!");
+    }
+  };
 
   return (
     <div className="bg-white h-[52px] flex justify-between py-1 px-5 xl:px-50 fixed top-0 w-full z-100">
       <div className="flex gap-2 items-center">
-        <Link to={"/"}>
+        <Link to={"/feeds"}>
           <img
             src={"/Logo/linkedIn-logo.png"}
             alt="LinkedInLogo"
@@ -31,24 +83,39 @@ export const Navbar2 = () => {
         </Link>
         <div className="relative">
           <input
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+            }}
             className="searchInput w-70 bg-gray-100 rounded-sm h-10 px-4"
             type="text"
             placeholder="Search"
           />
 
-          {dropdown && (
+          {searchUser?.length > 0 && debounceTerm.length !== 0 && (
             <>
               <div className="absolute w-88 left-0 bg-gray-200">
-                <div className="flex gap-2 mb-1 items-center cursor-pointer">
-                  <div>
-                    <img
-                      src="https://avatar.iran.liara.run/public/boy?username=Ash"
-                      alt="Profile Logo"
-                      className="w-10 h-10 rounded-full border-gray-200 "
-                    />
-                  </div>
-                  <div>User1</div>
-                </div>
+                {searchUser.map((item, index) => {
+                  return (
+                    <>
+                      <Link
+                        onClick={() => setSearchTerm("")}
+                        to={`/profile/${item?._id}`}
+                        key={index}
+                        className="flex gap-2 mb-1 items-center cursor-pointer"
+                      >
+                        <div>
+                          <img
+                            src={item?.profile_pic}
+                            alt="Profile Logo"
+                            className="w-10 h-10 rounded-full border-gray-200 "
+                          />
+                        </div>
+                        <div>{item?.f_name}</div>
+                      </Link>
+                    </>
+                  );
+                })}
               </div>
             </>
           )}
@@ -128,9 +195,13 @@ export const Navbar2 = () => {
                 color: location.pathname === "/notification" ? "black" : "gray",
               }}
             />{" "}
-            <span className="p-1 rounded-full text-sm bg-red-700 text-white">
-              1
-            </span>{" "}
+            {notificationCount > 0 && (
+              <>
+                <span className="p-1 rounded-full text-sm bg-red-700 text-white">
+                  {notificationCount}
+                </span>
+              </>
+            )}{" "}
           </div>
           <div
             className={`text-sm text-gray-500 ${
