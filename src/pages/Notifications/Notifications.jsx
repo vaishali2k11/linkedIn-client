@@ -69,16 +69,16 @@ export const Notifications = ({ setDoRefetchNotification }) => {
   };
 
   return (
-    <div className="px-5 xl:px-50 py-9 flex gap-5 w-full mt-5 bg-gray-100">
+    <div className="px-5 xl:px-50 mt-[54px] flex gap-5 w-full bg-gray-100 max-h-[calc(100%-126px)] min-h-[calc(100%-126px)] h-full">
       {/* Left Side */}
-      <div className="w-[21%] sm:block sm:w-[23%] hidden py-5">
+      <div className="w-[21%] sm:block sm:w-[23%] hidden h-[95%] my-3">
         <div className="h-fit">
           <ProfileCard data={ownData} />
         </div>
       </div>
 
       {/* Middle Side */}
-      <div className="w-full py-5 sm:w-[50%]">
+      <div className="w-full my-3 sm:w-[50%] min-h-[95%] max-h-[95%] h-full overflow-y-auto">
         {/* Notifications List */}
         {notifications.length > 0 ? (
           <>
@@ -118,8 +118,8 @@ export const Notifications = ({ setDoRefetchNotification }) => {
 
       {/* Right Side */}
 
-      <div className="w-[26%] py-5 pt-0 hidden bottom-0 md:block">
-        <div className="my-5 sticky top-19">
+      <div className="w-[26%] h-[95%] my-3 hidden bottom-0 md:block">
+        <div className="sticky">
           <Advertisement />
         </div>
       </div>
