@@ -15,34 +15,34 @@ const SignUp = (props) => {
 
 
     const handleOnChangeInput = (event, key) => {
-        setRegisterFields({...registerFields, [key]: event.target.value});
+        setRegisterFields({ ...registerFields, [key]: event.target.value });
     }
 
     const handleRegisterFn = async () => {
         try {
-            if(registerFields.email.trim().length === 0 || registerFields.password.trim().length === 0 || registerFields.f_name.trim().length === 0) {
+            if (registerFields.email.trim().length === 0 || registerFields.password.trim().length === 0 || registerFields.f_name.trim().length === 0) {
                 toast.error(`Please fill all credentials!`);
             }
 
             const response = await axios.post('http://localhost:8080/api/auth/register', registerFields);
 
-            if(response) {
+            if (response) {
                 toast.success(`You have registered successfully!`);
-                setRegisterFields({...registerFields, email: "", password: "", f_name: ""})
+                setRegisterFields({ ...registerFields, email: "", password: "", f_name: "" })
                 navigate("/signIn")
             }
-        } catch(error) {
+        } catch (error) {
             console.log('handleRegisterFn error:', error)
             toast.error(error?.response?.data?.error);
         }
     }
 
     return (
-        <div className="w-full max-h-[calc(100%-134px)] pt-[60px] overflow-y-auto min-h-[calc(100%-134px)] h-full flex flex-col items-center justify-center">
-            <div className="text-4xl mb-5 mt-[60px]">Make the most of your professional life</div>
-            <div className="w-[85%] md:w-[28%] shadow-xl rounded-sm box p-10">
+        <div className="w-full max-h-[calc(100%-134px)] overflow-y-auto min-h-[calc(100%-134px)] h-full flex flex-col items-center justify-center">
+            {/* <div className="text-4xl mb-5 mt-[110px]">Make the most of your professional life</div> */}
+            <div className="w-[85%] md:w-[28%] shadow-xl rounded-sm box p-10 py-6 pt-4">
                 <div className="flex flex-col gap-4">
-                    
+                    <div className="text-3xl">Sign In</div>
                     <div>
                         <label htmlFor="email">Email</label>
                         <input value={registerFields.email} onChange={(e) => handleOnChangeInput(e, 'email')} type="text" className="w-full text-xl border-2 rounded-lg px-5 py-1" placeholder="Email" />
@@ -70,7 +70,7 @@ const SignUp = (props) => {
 
                 <div><GoogleLoginComp handleChangeLoginValue={props.handleChangeLoginValue} /></div>
             </div>
-            <div className="mt-4 mb-10">Already on LinkedIn? <Link to={'/signIn'} className="text-blue-800 cursor-pointer">Sign in</Link></div>
+            <div className="mt-4 mb-2.5">Already on LinkedIn? <Link to={'/signIn'} className="text-blue-800 cursor-pointer">Sign in</Link></div>
             <ToastContainer />
         </div>
     )
