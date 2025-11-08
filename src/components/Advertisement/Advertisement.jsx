@@ -10,7 +10,7 @@ export const Advertisement = () => {
     },[])
     
     return (
-        <div className="sticky top-18">
+        <div className="sticky">
             <Card padding={0}>
                 <div className="relative h-25">
                     <div className="relative h-22 w-full rounded-md">

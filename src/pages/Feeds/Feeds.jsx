@@ -65,7 +65,7 @@ export const Feeds = () => {
   };
 
   return (
-    <div className="px-5 xl:px-50 mt-[54px] flex gap-5 w-full bg-gray-100 min-h-[calc(100%-126px)] max-h-[calc(100%-126px)] h-full overflow-y-auto">
+    <div className="px-5 xl:px-50 mt-[54px] flex gap-5 w-full bg-gray-100 min-h-[calc(100%-126px)] max-h-[calc(100%-126px)] h-full overflow-hidden">
       {/* Left Side */}
       <div className="w-[21%] sm:block sm:w-[23%] hidden py-5">
         <div className="h-fit">

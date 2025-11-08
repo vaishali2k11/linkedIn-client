@@ -252,11 +252,11 @@ export const Profile = () => {
   };
 
   return (
-    <div className="px-5 xl:px-50 py-9 flex flex-col gap-5 w-full mt-5 bg-gray-100">
-      <div className="flex justify-between">
+    <div className="px-5 xl:px-50 mt-[54px] flex flex-col gap-5 w-full bg-gray-100 min-h-[calc(100%-126px)] max-h-[calc(100%-126px)] h-full overflow-hidden">
+      <div className="flex h-full justify-between">
         {/* Left Side Main Section */}
-        <div className="w-full md:w-[70%]">
-          <div>
+        <div className="w-full md:w-[70%] h-[95%] max-h-[95%] overflow-y-auto my-3">
+          <div className="">
             <Card padding={0}>
               <div className="w-full h-fit">
                 <div className="relative w-full h-[200px]">
@@ -503,8 +503,8 @@ export const Profile = () => {
           </div>
         </div>
 
-        <div className="hidden md:flex md:w-[28%]">
-          <div className="sticky top-19">
+        <div className="hidden md:flex md:w-[28%] h-[90%] mt-3">
+          <div className="sticky w-full">
             <Advertisement />
           </div>
         </div>
