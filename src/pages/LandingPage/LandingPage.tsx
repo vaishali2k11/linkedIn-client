@@ -5,7 +5,7 @@ import { GoogleLoginComp } from "../../components/GoogleLogin/GoogleLogin"
 export const LandingPage = (props: any) => {
 
     return (
-        <div className="my-4 py-[50px] md:pl-[120px] px-5 md:flex justify-between">
+        <div className="pt-[30px] pb-5 max-h-[calc(100%-134px)] min-h-[calc(100%-134px)] h-full overflow-y-auto md:pl-[120px] px-5 md:flex justify-between">
             <div className="md:w-[40%]">
                 <div className="text-4xl mx-auto text-gray-500">
                     Welcome To Your Professional Community
@@ -26,7 +26,7 @@ export const LandingPage = (props: any) => {
                 </Link>
             </div>
 
-            <div className="md:w-[50%] h-120">
+            <div className="md:w-[50%] h-full">
                 <img src={`https://media.licdn.com/media//AAYAAgSrAAgAAQAAAAAAAGM6w-NyPk-_SVikYiCJ6V3Z-Q.png`} className="w-full h-full" alt="landing-img" />
             </div>
         </div>

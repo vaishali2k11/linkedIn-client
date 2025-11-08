@@ -36,8 +36,8 @@ export const SignIn = (props) => {
     }
 
     return (
-        <div className="w-full flex flex-col items-center justify-center">
-            <div className="w-[85%] md:w-[28%] shadow-xl rounded-sm box p-10">
+        <div className="w-full min-h-[calc(100%-134px)] max-h-[calc(100%-134px)] overflow-y-auto h-full flex flex-col items-center justify-center">
+            <div className="w-[85%] md:w-[28%] shadow-lg rounded-sm box p-10 mt-[18px]">
                 <div className="text-3xl">Sign In</div>
                 <div className="my-5"><GoogleLoginComp handleChangeLoginValue={props.handleChangeLoginValue} /></div>
 
@@ -65,7 +65,7 @@ export const SignIn = (props) => {
                 </div>
             </div>
 
-            <div className="mt-4 mb-[50px]">New to LinkedIn? <Link to={'/signUp'} className="text-blue-800 cursor-pointer">Join Now</Link></div>
+            <div className="mt-4 mb-[10px]">New to LinkedIn? <Link to={'/signUp'} className="text-blue-800 cursor-pointer">Join Now</Link></div>
 
             <ToastContainer />
         </div>

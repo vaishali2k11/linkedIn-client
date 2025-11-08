@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export const Navbar1 = () => {
 
     return (
-        <nav className="w-full bg-gray-100 md:px-[100px] px-5 flex justify-between py-4 box-border">
+        <nav className="w-full bg-gray-100 md:px-[100px] px-5 flex justify-between py-2 box-border">
             <Link to={'/'} className="flex justify-between">
                 <div className="flex gap-1 items-center cursor-pointer">
                     <h3 className="text-blue-800 font-bold text-3xl">Linked</h3>
