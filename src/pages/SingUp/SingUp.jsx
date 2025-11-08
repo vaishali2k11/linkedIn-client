@@ -38,8 +38,8 @@ const SignUp = (props) => {
     }
 
     return (
-        <div className="w-full flex flex-col items-center justify-center">
-            <div className="text-4xl mb-5">Make the most of your professional life</div>
+        <div className="w-full max-h-[calc(100%-134px)] pt-[60px] overflow-y-auto min-h-[calc(100%-134px)] h-full flex flex-col items-center justify-center">
+            <div className="text-4xl mb-5 mt-[60px]">Make the most of your professional life</div>
             <div className="w-[85%] md:w-[28%] shadow-xl rounded-sm box p-10">
                 <div className="flex flex-col gap-4">
                     

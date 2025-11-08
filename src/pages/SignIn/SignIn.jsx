@@ -65,7 +65,7 @@ export const SignIn = (props) => {
                 </div>
             </div>
 
-            <div className="mt-4 mb-[10px]">New to LinkedIn? <Link to={'/signUp'} className="text-blue-800 cursor-pointer">Join Now</Link></div>
+            <div className="mt-4 mb-2.5">New to LinkedIn? <Link to={'/signUp'} className="text-blue-800 cursor-pointer">Join Now</Link></div>
 
             <ToastContainer />
         </div>
