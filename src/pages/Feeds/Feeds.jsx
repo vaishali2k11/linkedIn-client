@@ -65,7 +65,7 @@ export const Feeds = () => {
   };
 
   return (
-    <div className="px-5 xl:px-50 py-9 flex gap-5 w-full mt-5 bg-gray-100">
+    <div className="px-5 xl:px-50 mt-[54px] flex gap-5 w-full bg-gray-100 min-h-[calc(100%-126px)] max-h-[calc(100%-126px)] h-full overflow-y-auto">
       {/* Left Side */}
       <div className="w-[21%] sm:block sm:w-[23%] hidden py-5">
         <div className="h-fit">
@@ -86,7 +86,7 @@ export const Feeds = () => {
       </div>
 
       {/* Middle Side */}
-      <div className="w-full py-5 sm:w-[50%]">
+      <div className="w-full mb-2.5 mt-5 max-h-full overflow-y-auto sm:w-[50%]">
         {/* Post Section */}
         <div>
           <Card padding={1}>

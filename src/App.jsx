@@ -29,7 +29,7 @@ function App() {
 
   return (
     <>
-      <div className="bg-gray-100 w-full box-border h-screen">
+      <div className={`bg-gray-100 w-full h-screen ${isLogin ? 'border border-white' : 'border-0'}`}>
         {isLogin ? <Navbar2 doRefetchNotification={doRefetchNotification} /> : <Navbar1 />}
         <Routes>
           <Route path="/" element={isLogin ? <Navigate to={'/feeds'} /> : <LandingPage handleChangeLoginValue={handleChangeLoginValue} />} />
