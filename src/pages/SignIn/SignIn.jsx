@@ -28,10 +28,10 @@ export const SignIn = (props) => {
                 props.handleChangeLoginValue(true);
                 navigate('/feeds')
             }
-            toast.error(error?.reponse?.data?.error);
+            toast.error(error?.response?.data?.error);
         } catch (error) {
             console.log('handleLoginFn error:', error)
-            toast.error(error?.reponse?.data?.error);
+            toast.error(error?.response?.data?.error);
         }
     }
 

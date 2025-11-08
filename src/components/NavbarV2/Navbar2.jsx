@@ -10,7 +10,8 @@ import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
 import MessageIcon from "@mui/icons-material/Message";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 
-export const Navbar2 = () => {
+
+export const Navbar2 = ({ doRefetchNotification }) => {
   const location = useLocation();
   const [userData, setUserData] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,9 +36,11 @@ export const Navbar2 = () => {
   useEffect(() => {
     let userData = localStorage.getItem("userInfo");
     setUserData(userData ? JSON.parse(userData) : null);
-
-    handleToFetchNotification();
   }, []);
+  
+  useEffect(() => {
+    handleToFetchNotification();
+  },[doRefetchNotification])
 
   const handleToFetchNotification = async () => {
     try {
@@ -62,7 +65,7 @@ export const Navbar2 = () => {
         { withCredentials: true }
       );
 
-      if (response) {
+      if (response && response.data && response.data.users && response.data.users.length) {
         setSearchUser(response?.data?.users);
       }
     } catch (error) {
@@ -97,7 +100,6 @@ export const Navbar2 = () => {
               <div className="absolute w-88 left-0 bg-gray-200">
                 {searchUser.map((item, index) => {
                   return (
-                    <>
                       <Link
                         onClick={() => setSearchTerm("")}
                         to={`/profile/${item?._id}`}
@@ -113,7 +115,6 @@ export const Navbar2 = () => {
                         </div>
                         <div>{item?.f_name}</div>
                       </Link>
-                    </>
                   );
                 })}
               </div>

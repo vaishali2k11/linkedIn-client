@@ -14,7 +14,7 @@ export const Advertisement = () => {
             <Card padding={0}>
                 <div className="relative h-25">
                     <div className="relative h-22 w-full rounded-md">
-                        <img src={""} alt="" className="rounded-t-md h-full w-full" />
+                        <img src={userData?.cover_pic} alt="" className="rounded-t-md h-full w-full" />
                     </div>
                     <div className="absolute top-14 left-[40%] z-10">
                         <img src={userData?.profile_pic} alt="Profile Logo" className="rounded-full border-2 h-14 w-14 border-white cursor-pointer" />

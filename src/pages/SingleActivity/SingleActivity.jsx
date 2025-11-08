@@ -12,16 +12,16 @@ export const SingleActivity = () => {
   const [ownData, setOwnData] = useState(null);
   const [postData, setPostData] = useState(null);
 
-  const handleToFetchDataOnLoad = async () => {
+  const toFetchDataOnLoad = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/auth/get-post-by-id/${postId}`,
+        `http://localhost:8080/api/post/get-post-by-id/${postId}`,
         {
           withCredentials: true,
         }
       );
 
-      if (response) {
+      if (response && response.data && response.data.posts) {
         setPostData(response?.data?.posts);
       }
     } catch (error) {
@@ -33,7 +33,7 @@ export const SingleActivity = () => {
   useEffect(() => {
     let userData = localStorage.getItem("userInfo");
     setOwnData(userData ? JSON.parse(userData) : null);
-    handleToFetchDataOnLoad();
+    toFetchDataOnLoad();
   }, []);
   return (
     <div className="px-5 xl:px-50 py-9 flex gap-5 w-full mt-5 bg-gray-100">

@@ -6,7 +6,7 @@ import { Advertisement } from "../../components/Advertisement/Advertisement";
 import { ProfileCard } from "../../components/ProfileCard/ProfileCard";
 import { Card } from "../../components/Card/Card";
 
-export const Notifications = () => {
+export const Notifications = ({ setDoRefetchNotification }) => {
   const navigate = useNavigate();
   const [ownData, setOwnData] = useState(null);
   const [notifications, setNotifications] = useState([]);
@@ -14,18 +14,18 @@ export const Notifications = () => {
   useEffect(() => {
     let userData = localStorage.getItem("userInfo");
     setOwnData(userData ? JSON.parse(userData) : null);
-    handleToFetchNotificationDataApi();
+    fetchNotificationDataApi();
   }, []);
 
-  const handleToFetchNotificationDataApi = async () => {
+  const fetchNotificationDataApi = async () => {
     try {
       const response = await axios.get(
         `http://localhost:8080/api/notification/get-notification`,
         { withCredentials: true }
       );
 
-      if (response) {
-        setNotifications(response?.data?.notifications);
+      if (response && response.data && response.data.notifications && response.data.notifications.length) {
+        setNotifications(response.data.notifications);
       }
     } catch (error) {
       console.log("error:", error);
@@ -35,21 +35,33 @@ export const Notifications = () => {
 
   const handleOnClickNotification = async (item) => {
     try {
-      const response = await axios.put(
-        `http://localhost:8080/api/notification/update-notification-read-status`,
-        {
-          notificationId: item?._id,
-        },
-        { withCredentials: true }
-      );
+      if (item && !item.is_read) {
+        const response = await axios.put(
+          `http://localhost:8080/api/notification/update-notification-read-status`,
+          {
+            notificationId: item?._id,
+          },
+          { withCredentials: true }
+        );
 
-      if (response) {
+        if (response) {
+          if (item.type === "comment") {
+            console.log("Here...")
+            navigate(`/profile/${ownData?._id}/activities/${item?.post_id}`);
+          } else {
+            navigate("/my-network");
+          }
+          setDoRefetchNotification((prev) => !prev);
+        }
+      } else if (item && item.is_read) {
         if (item.type === "comment") {
-          navigate(`/profile/${ownData?._id}/activities/${item?.postId}`);
+          navigate(`/profile/${ownData?._id}/activities/${item?.post_id}`);
         } else {
           navigate("/my-network");
         }
+        setDoRefetchNotification((prev) => !prev);
       }
+
     } catch (error) {
       console.log("error:", error);
       toast.error("Failed to copy the link!");
@@ -68,38 +80,45 @@ export const Notifications = () => {
       {/* Middle Side */}
       <div className="w-full py-5 sm:w-[50%]">
         {/* Notifications List */}
-        <div>
-          <Card padding={0}>
-            <div className="w-full">
-              {/* For each notification */}
-              {notifications?.map((item, index) => {
-                return (
-                  <>
-                    <div
-                      key={index}
-                      onClick={() => handleOnClickNotification(item)}
-                      className={`border-b cursor-pointer flex gap-4 items-center border-gray-300 p-3 ${
-                        item?.is_read ? "bg-gray-200" : "bg-blue-100"
-                      }`}
-                    >
-                      <img
-                        src={item?.sender?.profile_pic}
-                        alt="profile photo"
-                        className="rounded-full cursor-pointer w-15 h-15"
-                      />
-                      <div>{item?.content}</div>
-                    </div>
-                  </>
-                );
-              })}
+        {notifications.length > 0 ? (
+          <>
+            <div className="min-h-[calc(100vh-205px)]">
+              <Card padding={0}>
+                <div className="w-full">
+                  {/* For each notification */}
+                  {notifications.map((item, index) => {
+                    return (
+                      <div
+                        key={index}
+                        onClick={() => handleOnClickNotification(item)}
+                        className={`border-b cursor-pointer flex gap-4 items-center border-gray-300 p-3 ${item?.is_read ? "bg-gray-200" : "bg-blue-100"
+                          }`}
+                      >
+                        <img
+                          src={item?.sender?.profile_pic}
+                          alt="profile photo"
+                          className="rounded-full cursor-pointer w-15 h-15"
+                        />
+                        <div>{item?.content}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Card>
             </div>
-          </Card>
-        </div>
+          </>
+        ) : (
+          <>
+            <div className="flex justify-center items-start min-h-[calc(100vh-205px)]">
+              <span className="mt-[50px] text-xl">Oops! No notification available.</span>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Right Side */}
 
-      <div className="w-[26%] py-5 hidden md:block">
+      <div className="w-[26%] py-5 pt-0 hidden bottom-0 md:block">
         <div className="my-5 sticky top-19">
           <Advertisement />
         </div>

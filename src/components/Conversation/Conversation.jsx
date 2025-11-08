@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-export const Conversation = ({ item, id, ownData, handleSelectedConv, activeConvId }) => {
+export const Conversation = ({ item, ownData, handleSelectedConv, activeConvId }) => {
   const [memberData, setMemberData] = useState(null);
 
   useEffect(() => {
@@ -8,16 +8,14 @@ export const Conversation = ({ item, id, ownData, handleSelectedConv, activeConv
     setMemberData(arr[0]);
   }, []);
 
-  const handleClickFn = async () => {
+  const handleClickFn = () => {
     handleSelectedConv(item?._id, memberData)
   }
 
   return (
     <div
-      key={id}
-
       onClick={handleClickFn}
-      className={`flex items-center w-full cursor-pointer border-b bordre-gray-300 gap-3 p-4 hover:bg-gray-200 ${activeConvId === item?._id ? 'bg-gray-100' : null}`}
+      className={`flex items-center w-full cursor-pointer bordre-gray-300 gap-3 p-4 hover:bg-gray-300 ${activeConvId === item?._id ? 'bg-gray-200' : null}`}
     >
       <div className="shrink-0">
         <img

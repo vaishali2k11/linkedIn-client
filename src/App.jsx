@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import axios from "axios";
 
 import "./App.css";
 
@@ -22,6 +21,7 @@ import { Footer } from "./components/Footer/Footer";
 
 function App() {
   const [isLogin, setIsLogin] = useState(localStorage.getItem("isLogin"));
+  const [doRefetchNotification, setDoRefetchNotification] = useState(false);
 
   const handleChangeLoginValue = (value) => {
     setIsLogin(value);
@@ -30,7 +30,7 @@ function App() {
   return (
     <>
       <div className="bg-gray-100 w-full box-border">
-        {isLogin ? <Navbar2 /> : <Navbar1 />}
+        {isLogin ? <Navbar2 doRefetchNotification={doRefetchNotification} /> : <Navbar1 />}
         <Routes>
           <Route path="/" element={isLogin ? <Navigate to={'/feeds'} /> : <LandingPage handleChangeLoginValue={handleChangeLoginValue} />} />
           <Route path="/signUp" element={isLogin ? <Navigate to={'/feeds'} /> : <SignUp handleChangeLoginValue={handleChangeLoginValue} />} />
@@ -39,7 +39,7 @@ function App() {
           <Route path="/my-network" element={isLogin ? <MyNetwork /> : <Navigate to={'/signIn'} />} />
           <Route path="/resume" element={isLogin ? <Resume /> : <Navigate to={'/signIn'} />} />
           <Route path="/messages" element={isLogin ? <Messages /> : <Navigate to={'/signIn'} />} />
-          <Route path="/notification" element={isLogin ? <Notifications /> : <Navigate to={'/signIn'} />} />
+          <Route path="/notification" element={isLogin ? <Notifications setDoRefetchNotification={setDoRefetchNotification} /> : <Navigate to={'/signIn'} />} />
           <Route path="/profile/:id" element={isLogin ? <Profile /> : <Navigate to={'/signIn'} />} />
           <Route path="/profile/:id/activities" element={isLogin ? <AllActivities /> : <Navigate to={'/signIn'} />} />
           <Route

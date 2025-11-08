@@ -6,14 +6,12 @@ import { ProfileCard } from "../../components/ProfileCard/ProfileCard";
 export const MyNetwork = () => {
   const [text, setText] = useState("Catch Up With Friends");
   const [friendData, setFriendData] = useState([]);
+  const [pendingFriendData, setPendingFriendData] = useState([]);
 
   useEffect(() => {
-    if (text === "Catch up with Friends") {
-      fetchFriendList();
-    } else {
-      fetchPendingRequest();
-    }
-  }, [text]);
+    fetchFriendList();
+    fetchPendingRequest();
+  }, []);
 
   const handleFriends = async () => {
     setText("Catch Up With Friends");
@@ -31,6 +29,7 @@ export const MyNetwork = () => {
       );
 
       if (response) {
+        console.log('response:', response)
         setFriendData(response?.data?.friends);
       }
     } catch (error) {
@@ -47,7 +46,7 @@ export const MyNetwork = () => {
       );
 
       if (response) {
-        setFriendData(response?.data?.pendingFriends);
+        setPendingFriendData(response?.data?.pendingFriends);
       }
     } catch (error) {
       console.log("error:", error);
@@ -62,17 +61,15 @@ export const MyNetwork = () => {
         <div className="flex gap-3">
           <button
             onClick={handleFriends}
-            className={`p-1 cursor-pointer border rounded-lg border-gray-300 ${
-              text === "Catch Up With Friends" ? "bg-blue-800 text-white" : ""
-            }`}
+            className={`p-1 cursor-pointer border rounded-lg border-gray-300 ${text === "Catch Up With Friends" ? "bg-blue-800 text-white" : ""
+              }`}
           >
             Friends
           </button>
           <button
             onClick={handlePending}
-            className={`p-1 cursor-pointer border rounded-lg border-gray-300 ${
-              text === "Pending Request" ? "bg-blue-800 text-white" : ""
-            }`}
+            className={`p-1 cursor-pointer border rounded-lg border-gray-300 ${text === "Pending Request" ? "bg-blue-800 text-white" : ""
+              }`}
           >
             Pending Request
           </button>
@@ -80,23 +77,40 @@ export const MyNetwork = () => {
       </div>
 
       <div className="flex h-[80vh] w-full gap-7 flex-wrap items-start justify-center">
-        {friendData?.map((friend, index) => {
-          return (
-            <>
-              <div className="md:w-[23%] h-[270px] sm:w-full">
-                <ProfileCard data={friend} />
-              </div>
-            </>
-          );
-        })}
+        {text === "Catch Up With Friends" ? (
+          <>
 
-        {friendData.length === 0 ? (
-          text === "Catch Up With Friends" ? (
-            <div>No any Friends Yet</div>
-          ) : (
-            <div>No any Pending Friends yet</div>
-          )
+
+            {friendData?.map((friend, index) => {
+              return (
+                <>
+                  <div className="md:w-[23%] h-[270px] sm:w-full">
+                    <ProfileCard data={friend} />
+                  </div>
+                </>
+              );
+            })}
+          </>
+        ) : text === "Pending Request" ? (
+          <>
+            {pendingFriendData?.map((friend, index) => {
+              return (
+                <>
+                  <div className="md:w-[23%] h-[270px] sm:w-full">
+                    <ProfileCard data={friend} />
+                  </div>
+                </>
+              );
+            })}
+          </>
         ) : null}
+
+        {friendData.length === 0 && text === "Catch Up With Friends" ? (
+          <div>No any Friends Yet</div>
+        ) : pendingFriendData.length === 0 && text === "Pending Request" ? (
+          <div>No any Pending Friends yet</div>
+        )
+          : null}
       </div>
 
       <ToastContainer />

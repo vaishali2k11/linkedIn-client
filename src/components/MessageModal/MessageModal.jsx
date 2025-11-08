@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 
 export const MessageModal = ({ selfData, userData }) => {
   const [message, setMessage] = useState("");
@@ -16,6 +17,7 @@ export const MessageModal = ({ selfData, userData }) => {
       );
 
       if (response) {
+        setMessage("");
         window.location.reload();
       }
     } catch (error) {
@@ -31,7 +33,7 @@ export const MessageModal = ({ selfData, userData }) => {
         <br />
         <textarea
           value={message}
-          onChange={(e) => setMessage(e.target.message)}
+          onChange={(e) => setMessage(e.target.value)}
           className="p-2 mt-1 w-full border rounded-md"
           placeholder="Enter Message"
           cols={10}
@@ -41,12 +43,17 @@ export const MessageModal = ({ selfData, userData }) => {
         ></textarea>
       </div>
 
-      <div
-        onClick={handleSendMessage}
-        className="bg-blue-500 text-white w-fit py-1 px-3 cursor-pointer rounded-2xl"
+      <button
+        onClick={() => {
+          handleSendMessage();
+        }}
+        disabled={!message}
+        className="bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50 text-white w-fit py-1 px-3 cursor-pointer rounded-2xl"
       >
         Send
-      </div>
+      </button>
+
+      <ToastContainer />
     </div>
   );
 };

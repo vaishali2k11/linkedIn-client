@@ -103,7 +103,7 @@ export const Post = ({ profile, postData, personalData }) => {
     }
   };
 
-  const handleCopyToClipboard = async () => {
+  const copyToClipboard = async () => {
     try {
       let string = `http://localhost:5173/profile/${postData?.user?._id}/activities/${postData?._id}`;
       await navigator.clipboard.writeText(string);
@@ -200,7 +200,7 @@ export const Post = ({ profile, postData, personalData }) => {
               <span>Comment</span>
             </div>
             <div
-              onClick={handleCopyToClipboard}
+              onClick={copyToClipboard}
               className="w-[33%] justify-center flex gap-2 items-center border-r border-gray-100 p-2 cursor-pointer hover:bg-gray-100"
             >
               <SendIcon sx={{ fontSize: 22, color: "blue" }} />{" "}
